@@ -1,0 +1,403 @@
+from __future__ import annotations
+
+from datetime import date
+from pathlib import Path
+from typing import Dict, List
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from matplotlib.ticker import EngFormatter, PercentFormatter
+from shapely.geometry import Point, Polygon
+
+
+COUNTRIES = [
+    "Philippines",
+    "Singapore",
+    "Indonesia",
+    "Malaysia",
+    "Thailand",
+    "Vietnam",
+]
+
+ISLAND_GROUPS = ["Luzon", "Visayas", "Mindanao"]
+
+
+def setup_style() -> None:
+    sns.set_theme(style="whitegrid", context="talk")
+    plt.rcParams.update(
+        {
+            "axes.facecolor": "#fcfcfc",
+            "figure.facecolor": "white",
+            "grid.color": "#d9d9d9",
+            "grid.linewidth": 0.7,
+            "axes.edgecolor": "#bdbdbd",
+            "axes.labelcolor": "#2f2f2f",
+            "xtick.color": "#2f2f2f",
+            "ytick.color": "#2f2f2f",
+            "legend.frameon": False,
+            "axes.spines.top": False,
+            "axes.spines.right": False,
+            "font.size": 11,
+        }
+    )
+
+
+def get_base_paths() -> tuple[Path, Path, Path]:
+    base_dir = Path(__file__).resolve().parents[1]
+    data_dir = base_dir / "data"
+    output_dir = base_dir / "outputs"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    return base_dir, data_dir, output_dir
+
+
+def find_single_data_file(data_dir: Path) -> Path:
+    files = [p for p in data_dir.iterdir() if p.is_file() and not p.name.startswith(".")]
+    if len(files) != 1:
+        raise RuntimeError(
+            f"Expected exactly one data file in {data_dir}, found {len(files)}: {[f.name for f in files]}"
+        )
+    return files[0]
+
+
+def load_data(data_file: Path) -> pd.DataFrame:
+    if data_file.suffix.lower() in {".xlsx", ".xls"}:
+        df = pd.read_excel(data_file, sheet_name="Power facilities")
+    elif data_file.suffix.lower() == ".csv":
+        df = pd.read_csv(data_file)
+    else:
+        raise RuntimeError(f"Unsupported data file type: {data_file.suffix}")
+    df.columns = [c.strip() for c in df.columns]
+    return df
+
+
+def validate_columns(df: pd.DataFrame, columns: List[str]) -> None:
+    missing = [c for c in columns if c not in df.columns]
+    if missing:
+        raise RuntimeError(f"Missing required columns: {missing}")
+
+
+def prepare_operating_data(df: pd.DataFrame) -> pd.DataFrame:
+    required = [
+        "Country/area",
+        "Type",
+        "Capacity (MW)",
+        "Start year",
+        "Status",
+        "Owner(s) GEM Entity ID",
+        "Latitude",
+        "Longitude",
+    ]
+    validate_columns(df, required)
+
+    out = df.copy()
+    out["Status"] = out["Status"].astype(str).str.strip().str.lower()
+    out = out[out["Status"] == "operating"].copy()
+    out["Country/area"] = out["Country/area"].astype(str).str.strip()
+    out["Type"] = out["Type"].astype(str).str.strip()
+    out["Capacity (MW)"] = pd.to_numeric(out["Capacity (MW)"], errors="coerce")
+    out["Start year"] = pd.to_numeric(out["Start year"], errors="coerce")
+    out["Latitude"] = pd.to_numeric(out["Latitude"], errors="coerce")
+    out["Longitude"] = pd.to_numeric(out["Longitude"], errors="coerce")
+    out["Owner(s) GEM Entity ID"] = (
+        out["Owner(s) GEM Entity ID"].fillna("Unknown").astype(str).str.strip().replace("", "Unknown")
+    )
+
+    out = out[out["Capacity (MW)"].notna() & (out["Capacity (MW)"] > 0)].copy()
+    current_year = date.today().year
+    out["Age"] = np.where(
+        out["Start year"].notna() & (out["Start year"] <= current_year),
+        current_year - out["Start year"],
+        np.nan,
+    )
+    return out
+
+
+def build_type_color_map(types: List[str]) -> Dict[str, tuple]:
+    palette = sns.color_palette("muted", n_colors=len(types))
+    return dict(zip(types, palette))
+
+
+def capacity_weighted_age(group: pd.DataFrame) -> float:
+    valid = group[group["Age"].notna() & (group["Capacity (MW)"] > 0)]
+    if valid.empty:
+        return float("nan")
+    return float(np.average(valid["Age"], weights=valid["Capacity (MW)"]))
+
+
+def country_generation_mix(
+    country_df: pd.DataFrame, countries: List[str], type_order: List[str], type_colors: Dict[str, tuple], output_dir: Path
+) -> None:
+    mix = (
+        country_df.groupby(["Country/area", "Type"], as_index=False)["Capacity (MW)"]
+        .sum()
+        .rename(columns={"Capacity (MW)": "Capacity_MW"})
+    )
+    country_totals = mix.groupby("Country/area", as_index=False)["Capacity_MW"].sum().rename(
+        columns={"Capacity_MW": "Country_Total_MW"}
+    )
+    mix = mix.merge(country_totals, on="Country/area", how="left")
+    mix["Capacity_Share"] = mix["Capacity_MW"] / mix["Country_Total_MW"]
+
+    pivot = (
+        mix.pivot(index="Country/area", columns="Type", values="Capacity_Share")
+        .reindex(index=countries, columns=type_order)
+        .fillna(0)
+    )
+
+    fig, ax = plt.subplots(figsize=(14, 8))
+    pivot.plot(
+        kind="bar",
+        stacked=True,
+        ax=ax,
+        color=[type_colors[t] for t in pivot.columns],
+        width=0.8,
+        linewidth=0.2,
+    )
+    ax.set_title("Operating Capacity Mix by Country", pad=14, weight="bold")
+    ax.set_xlabel("")
+    ax.set_ylabel("Capacity Share")
+    ax.yaxis.set_major_formatter(PercentFormatter(1.0))
+    ax.set_ylim(0, 1)
+    ax.grid(axis="x", visible=False)
+    ax.legend(title="Generator Type", bbox_to_anchor=(1.01, 1), loc="upper left")
+    fig.tight_layout()
+    fig.savefig(output_dir / "country_generation_mix_stacked.png", dpi=300)
+    plt.close(fig)
+
+    mix.to_csv(output_dir / "country_generation_mix_summary.csv", index=False)
+
+
+def country_fleet_age(
+    country_df: pd.DataFrame, countries: List[str], type_order: List[str], type_colors: Dict[str, tuple], output_dir: Path
+) -> None:
+    age_df = (
+        country_df.groupby(["Country/area", "Type"], as_index=False)
+        .apply(capacity_weighted_age, include_groups=False)
+        .rename(columns={None: "Capacity_Weighted_Age_Years"})
+    )
+    age_df = age_df.dropna(subset=["Capacity_Weighted_Age_Years"])
+    age_df["Country/area"] = pd.Categorical(age_df["Country/area"], categories=countries, ordered=True)
+    age_df["Type"] = pd.Categorical(age_df["Type"], categories=type_order, ordered=True)
+    age_df = age_df.sort_values(["Country/area", "Type"])
+
+    fig, ax = plt.subplots(figsize=(16, 8))
+    sns.barplot(
+        data=age_df,
+        x="Country/area",
+        y="Capacity_Weighted_Age_Years",
+        hue="Type",
+        hue_order=type_order,
+        palette=type_colors,
+        ax=ax,
+    )
+    ax.set_title("Capacity-Weighted Fleet Age by Technology and Country", pad=14, weight="bold")
+    ax.set_xlabel("")
+    ax.set_ylabel("Capacity-Weighted Average Age (years)")
+    ax.grid(axis="x", visible=False)
+    ax.legend(title="Generator Type", bbox_to_anchor=(1.01, 1), loc="upper left")
+    fig.tight_layout()
+    fig.savefig(output_dir / "country_fleet_age_grouped.png", dpi=300)
+    plt.close(fig)
+
+    age_df.to_csv(output_dir / "country_fleet_age_summary.csv", index=False)
+
+
+def ownership_concentration(country_df: pd.DataFrame, countries: List[str], output_dir: Path, top_n: int = 10) -> None:
+    own = (
+        country_df.groupby(["Country/area", "Owner(s) GEM Entity ID"], as_index=False)["Capacity (MW)"]
+        .sum()
+        .rename(columns={"Capacity (MW)": "Capacity_MW"})
+    )
+    totals = own.groupby("Country/area", as_index=False)["Capacity_MW"].sum().rename(
+        columns={"Capacity_MW": "Country_Total_MW"}
+    )
+    own = own.merge(totals, on="Country/area", how="left")
+    own["Capacity_Share"] = own["Capacity_MW"] / own["Country_Total_MW"]
+
+    fig, axes = plt.subplots(3, 2, figsize=(18, 18), sharex=False)
+    axes = axes.ravel()
+    for i, country in enumerate(countries):
+        ax = axes[i]
+        top = (
+            own[own["Country/area"] == country]
+            .sort_values("Capacity_MW", ascending=False)
+            .head(top_n)
+            .sort_values("Capacity_MW", ascending=True)
+        )
+        ax.barh(top["Owner(s) GEM Entity ID"], top["Capacity_Share"], color="#4a6fa5", alpha=0.88)
+        ax.set_title(country, weight="bold")
+        ax.xaxis.set_major_formatter(PercentFormatter(1.0))
+        ax.set_xlabel("Capacity Share")
+        ax.set_ylabel("Owner GEM Entity ID")
+        ax.grid(axis="y", visible=False)
+    fig.suptitle("Ownership Concentration: Top Owners by Country (Operating Capacity)", fontsize=18, weight="bold")
+    fig.tight_layout(rect=[0, 0, 1, 0.98])
+    fig.savefig(output_dir / "ownership_concentration_top10_by_country.png", dpi=300)
+    plt.close(fig)
+
+    own.to_csv(output_dir / "ownership_concentration_summary.csv", index=False)
+
+
+def classify_island_group(lat: float, lon: float, polygons: Dict[str, Polygon]) -> str:
+    if pd.isna(lat) or pd.isna(lon):
+        return "Unknown"
+    point = Point(lon, lat)
+    for name, poly in polygons.items():
+        if poly.contains(point):
+            return name
+
+    if lat >= 12.2:
+        return "Luzon"
+    if lat >= 9.0:
+        return "Visayas"
+    return "Mindanao"
+
+
+def philippines_island_analysis(
+    ph_df: pd.DataFrame, type_order: List[str], type_colors: Dict[str, tuple], output_dir: Path
+) -> None:
+    polygons = {
+        "Luzon": Polygon(
+            [
+                (116.0, 14.2),
+                (120.3, 11.6),
+                (124.8, 11.8),
+                (126.5, 14.2),
+                (126.1, 18.8),
+                (122.3, 20.8),
+                (118.0, 19.4),
+                (116.0, 16.0),
+            ]
+        ),
+        "Visayas": Polygon(
+            [
+                (117.3, 12.5),
+                (124.0, 12.6),
+                (126.1, 11.5),
+                (125.8, 9.3),
+                (122.0, 8.8),
+                (118.5, 9.1),
+                (117.3, 10.5),
+            ]
+        ),
+        "Mindanao": Polygon(
+            [
+                (119.4, 9.7),
+                (126.1, 9.7),
+                (127.5, 8.2),
+                (127.3, 5.0),
+                (124.2, 4.0),
+                (120.5, 4.3),
+                (119.0, 6.8),
+            ]
+        ),
+    }
+
+    ph = ph_df.copy()
+    ph["Island_Group"] = ph.apply(
+        lambda x: classify_island_group(x["Latitude"], x["Longitude"], polygons),
+        axis=1,
+    )
+    ph = ph[ph["Island_Group"].isin(ISLAND_GROUPS)].copy()
+
+    island_mix = (
+        ph.groupby(["Island_Group", "Type"], as_index=False)["Capacity (MW)"]
+        .sum()
+        .rename(columns={"Capacity (MW)": "Capacity_MW"})
+    )
+    island_totals = island_mix.groupby("Island_Group", as_index=False)["Capacity_MW"].sum().rename(
+        columns={"Capacity_MW": "Island_Total_MW"}
+    )
+    island_mix = island_mix.merge(island_totals, on="Island_Group", how="left")
+    island_mix["Capacity_Share"] = island_mix["Capacity_MW"] / island_mix["Island_Total_MW"]
+
+    pivot = (
+        island_mix.pivot(index="Island_Group", columns="Type", values="Capacity_Share")
+        .reindex(index=ISLAND_GROUPS, columns=type_order)
+        .fillna(0)
+    )
+
+    fig, ax = plt.subplots(figsize=(12, 7))
+    pivot.plot(
+        kind="bar",
+        stacked=True,
+        ax=ax,
+        color=[type_colors[t] for t in pivot.columns],
+        width=0.72,
+        linewidth=0.2,
+    )
+    ax.set_title("Philippines Operating Capacity Mix by Island Group", pad=14, weight="bold")
+    ax.set_xlabel("")
+    ax.set_ylabel("Capacity Share")
+    ax.yaxis.set_major_formatter(PercentFormatter(1.0))
+    ax.set_ylim(0, 1)
+    ax.grid(axis="x", visible=False)
+    ax.legend(title="Generator Type", bbox_to_anchor=(1.01, 1), loc="upper left")
+    fig.tight_layout()
+    fig.savefig(output_dir / "philippines_island_generation_mix_stacked.png", dpi=300)
+    plt.close(fig)
+
+    island_age = (
+        ph.groupby("Island_Group", as_index=False)
+        .apply(capacity_weighted_age, include_groups=False)
+        .rename(columns={None: "Capacity_Weighted_Age_Years"})
+        .sort_values("Island_Group")
+    )
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.barplot(
+        data=island_age,
+        x="Island_Group",
+        y="Capacity_Weighted_Age_Years",
+        order=ISLAND_GROUPS,
+        color="#5f8f7b",
+        ax=ax,
+    )
+    ax.set_title("Philippines Capacity-Weighted Fleet Age by Island Group", pad=14, weight="bold")
+    ax.set_xlabel("")
+    ax.set_ylabel("Capacity-Weighted Average Age (years)")
+    ax.grid(axis="x", visible=False)
+    fig.tight_layout()
+    fig.savefig(output_dir / "philippines_island_weighted_age.png", dpi=300)
+    plt.close(fig)
+
+    island_mix.to_csv(output_dir / "philippines_island_mix_summary.csv", index=False)
+    island_age.to_csv(output_dir / "philippines_island_age_summary.csv", index=False)
+
+
+def main() -> None:
+    setup_style()
+    _, data_dir, output_dir = get_base_paths()
+    data_file = find_single_data_file(data_dir)
+    raw = load_data(data_file)
+    operating = prepare_operating_data(raw)
+
+    country_df = operating[operating["Country/area"].isin(COUNTRIES)].copy()
+    type_order = (
+        country_df.groupby("Type", as_index=False)["Capacity (MW)"]
+        .sum()
+        .sort_values("Capacity (MW)", ascending=False)["Type"]
+        .tolist()
+    )
+    type_colors = build_type_color_map(type_order)
+
+    country_generation_mix(country_df, COUNTRIES, type_order, type_colors, output_dir)
+    country_fleet_age(country_df, COUNTRIES, type_order, type_colors, output_dir)
+    ownership_concentration(country_df, COUNTRIES, output_dir, top_n=10)
+
+    ph_df = operating[operating["Country/area"] == "Philippines"].copy()
+    philippines_island_analysis(ph_df, type_order, type_colors, output_dir)
+
+    totals = country_df.groupby("Country/area", as_index=False)["Capacity (MW)"].sum()
+    totals["Capacity (MW)"] = totals["Capacity (MW)"].round(2)
+    totals.to_csv(output_dir / "country_total_operating_capacity_mw.csv", index=False)
+
+    print(f"Analysis complete. Outputs saved to: {output_dir}")
+    print(f"Data source: {data_file.name}")
+    print("Countries:", ", ".join(COUNTRIES))
+
+
+if __name__ == "__main__":
+    main()
