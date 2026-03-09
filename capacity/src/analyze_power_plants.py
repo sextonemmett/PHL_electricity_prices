@@ -181,6 +181,11 @@ def build_type_color_map(types: List[str]) -> Dict[str, tuple]:
     return dict(zip(types, palette))
 
 
+def build_country_color_map(countries: List[str]) -> Dict[str, tuple]:
+    palette = sns.color_palette("Set2", n_colors=len(countries))
+    return dict(zip(countries, palette))
+
+
 def capacity_weighted_age(group: pd.DataFrame) -> float:
     valid = group[group["Age"].notna() & (group["Capacity (MW)"] > 0)]
     if valid.empty:
@@ -232,7 +237,11 @@ def country_generation_mix(
 
 
 def country_fleet_age(
-    country_df: pd.DataFrame, countries: List[str], type_order: List[str], type_colors: Dict[str, tuple], output_dir: Path
+    country_df: pd.DataFrame,
+    countries: List[str],
+    type_order: List[str],
+    country_colors: Dict[str, tuple],
+    output_dir: Path,
 ) -> None:
     age_df = (
         country_df.groupby(["Country/area", "Type"], as_index=False)
@@ -242,23 +251,25 @@ def country_fleet_age(
     age_df = age_df.dropna(subset=["Capacity_Weighted_Age_Years"])
     age_df["Country/area"] = pd.Categorical(age_df["Country/area"], categories=countries, ordered=True)
     age_df["Type"] = pd.Categorical(age_df["Type"], categories=type_order, ordered=True)
-    age_df = age_df.sort_values(["Country/area", "Type"])
+    age_df = age_df.sort_values(["Type", "Country/area"])
 
     fig, ax = plt.subplots(figsize=(16, 8))
     sns.barplot(
         data=age_df,
-        x="Country/area",
+        x="Type",
         y="Capacity_Weighted_Age_Years",
-        hue="Type",
-        hue_order=type_order,
-        palette=type_colors,
+        order=type_order,
+        hue="Country/area",
+        hue_order=countries,
+        palette=country_colors,
         ax=ax,
     )
-    ax.set_title("Capacity-Weighted Fleet Age by Technology and Country", pad=14, weight="bold")
-    ax.set_xlabel("")
+    ax.set_title("Capacity-Weighted Fleet Age by Generator Type and Country", pad=14, weight="bold")
+    ax.set_xlabel("Generator Type")
     ax.set_ylabel("Capacity-Weighted Average Age (years)")
     ax.grid(axis="x", visible=False)
-    ax.legend(title="Generator Type", bbox_to_anchor=(1.01, 1), loc="upper left")
+    ax.legend(title="Country", bbox_to_anchor=(1.01, 1), loc="upper left")
+    ax.tick_params(axis="x", rotation=20)
     fig.tight_layout()
     fig.savefig(output_dir / "png" / "country_fleet_age_grouped.png", dpi=300)
     plt.close(fig)
@@ -307,7 +318,7 @@ def ownership_concentration(country_df: pd.DataFrame, countries: List[str], outp
     own = own.merge(totals, on="Country/area", how="left")
     own["Capacity_Share"] = own["Capacity_MW"] / own["Country_Total_MW"]
 
-    fig, axes = plt.subplots(3, 2, figsize=(18, 18), sharex=False)
+    fig, axes = plt.subplots(2, 3, figsize=(24, 14), subplot_kw={"aspect": "equal"})
     axes = axes.ravel()
     for i, country in enumerate(countries):
         ax = axes[i]
@@ -330,17 +341,29 @@ def ownership_concentration(country_df: pd.DataFrame, countries: List[str], outp
         else:
             plot_df = top
 
-        ax.pie(
+        labels = [
+            owner if share >= 0.06 else ""
+            for owner, share in zip(plot_df["Owner(s)"].tolist(), plot_df["Capacity_Share"].tolist())
+        ]
+        _, _, autotexts = ax.pie(
             plot_df["Capacity_MW"],
-            labels=plot_df["Owner(s)"],
-            autopct=lambda p: f"{p:.1f}%" if p >= 4 else "",
+            labels=labels,
+            autopct=lambda p: f"{p:.1f}%" if p >= 5 else "",
             startangle=90,
             counterclock=False,
-            textprops={"fontsize": 9},
+            radius=1.08,
+            labeldistance=1.06,
+            pctdistance=0.74,
+            wedgeprops={"linewidth": 0.8, "edgecolor": "white"},
+            textprops={"fontsize": 11},
         )
-        ax.set_title(country, weight="bold")
-    fig.suptitle("Ownership Share by Country (Top 7 Owners + Rest)", fontsize=18, weight="bold")
-    fig.tight_layout(rect=[0, 0, 1, 0.98])
+        for auto in autotexts:
+            auto.set_fontsize(11)
+            auto.set_weight("bold")
+        ax.set_title(country, fontsize=16, weight="bold", pad=14)
+
+    fig.suptitle("Ownership Share by Country (Top 7 Owners + Rest)", fontsize=24, weight="bold", y=0.98)
+    fig.subplots_adjust(left=0.03, right=0.97, top=0.9, bottom=0.04, wspace=0.2, hspace=0.3)
     fig.savefig(output_dir / "png" / "ownership_concentration_top7_plus_rest_pies.png", dpi=300)
     plt.close(fig)
 
@@ -499,9 +522,10 @@ def main() -> None:
         .tolist()
     )
     type_colors = build_type_color_map(type_order)
+    country_colors = build_country_color_map(COUNTRIES)
 
     country_generation_mix(country_df, COUNTRIES, type_order, type_colors, output_dir)
-    country_fleet_age(country_df, COUNTRIES, type_order, type_colors, output_dir)
+    country_fleet_age(country_df, COUNTRIES, type_order, country_colors, output_dir)
     country_total_weighted_age(country_df, COUNTRIES, output_dir)
     ownership_concentration(country_df, COUNTRIES, output_dir, top_n=7)
 

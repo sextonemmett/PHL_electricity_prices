@@ -1,0 +1,21 @@
+[project]
+name = "phl-electricity-prices"
+version = "0.1.0"
+description = "Data processing and visualization for Philippine electricity market, consumption, and capacity datasets."
+requires-python = ">=3.11"
+dependencies = [
+    "matplotlib",
+    "numpy",
+    "openpyxl",
+    "pandas",
+    "pdfplumber",
+    "seaborn",
+    "shapely",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+package = false
