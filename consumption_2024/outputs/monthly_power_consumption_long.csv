@@ -1,0 +1,385 @@
+Year,Region,Sector,Month,Consumption_MWh
+2024,Luzon,Residential,Jan,2144473
+2024,Luzon,Residential,Feb,2046855
+2024,Luzon,Residential,Mar,2102645
+2024,Luzon,Residential,Apr,2652169
+2024,Luzon,Residential,May,2992284
+2024,Luzon,Residential,Jun,2887220
+2024,Luzon,Residential,Jul,2615308
+2024,Luzon,Residential,Aug,2573030
+2024,Luzon,Residential,Sep,2497328
+2024,Luzon,Residential,Oct,2446339
+2024,Luzon,Residential,Nov,2413874
+2024,Luzon,Residential,Dec,2285311
+2024,Luzon,Commercial,Jan,1829274
+2024,Luzon,Commercial,Feb,1864857
+2024,Luzon,Commercial,Mar,1804139
+2024,Luzon,Commercial,Apr,1993947
+2024,Luzon,Commercial,May,2148074
+2024,Luzon,Commercial,Jun,2144066
+2024,Luzon,Commercial,Jul,2007853
+2024,Luzon,Commercial,Aug,2049752
+2024,Luzon,Commercial,Sep,2036387
+2024,Luzon,Commercial,Oct,2021273
+2024,Luzon,Commercial,Nov,2013232
+2024,Luzon,Commercial,Dec,1991365
+2024,Luzon,Industrial,Jan,1497466
+2024,Luzon,Industrial,Feb,1671007
+2024,Luzon,Industrial,Mar,1677800
+2024,Luzon,Industrial,Apr,1685465
+2024,Luzon,Industrial,May,1761515
+2024,Luzon,Industrial,Jun,1785486
+2024,Luzon,Industrial,Jul,1716345
+2024,Luzon,Industrial,Aug,1743549
+2024,Luzon,Industrial,Sep,1728293
+2024,Luzon,Industrial,Oct,1695260
+2024,Luzon,Industrial,Nov,1698295
+2024,Luzon,Industrial,Dec,1645453
+2024,Luzon,Others,Jan,155082
+2024,Luzon,Others,Feb,162234
+2024,Luzon,Others,Mar,168395
+2024,Luzon,Others,Apr,176005
+2024,Luzon,Others,May,183601
+2024,Luzon,Others,Jun,180697
+2024,Luzon,Others,Jul,177086
+2024,Luzon,Others,Aug,187136
+2024,Luzon,Others,Sep,177458
+2024,Luzon,Others,Oct,172536
+2024,Luzon,Others,Nov,173576
+2024,Luzon,Others,Dec,164509
+2024,Luzon,Total Sales,Jan,5626295
+2024,Luzon,Total Sales,Feb,5744952
+2024,Luzon,Total Sales,Mar,5752979
+2024,Luzon,Total Sales,Apr,6507586
+2024,Luzon,Total Sales,May,7085474
+2024,Luzon,Total Sales,Jun,6997470
+2024,Luzon,Total Sales,Jul,6516591
+2024,Luzon,Total Sales,Aug,6553466
+2024,Luzon,Total Sales,Sep,6439466
+2024,Luzon,Total Sales,Oct,6335408
+2024,Luzon,Total Sales,Nov,6298976
+2024,Luzon,Total Sales,Dec,6086638
+2024,Luzon,Own-Use,Jan,515313
+2024,Luzon,Own-Use,Feb,577654
+2024,Luzon,Own-Use,Mar,534182
+2024,Luzon,Own-Use,Apr,757293
+2024,Luzon,Own-Use,May,639499
+2024,Luzon,Own-Use,Jun,658681
+2024,Luzon,Own-Use,Jul,604958
+2024,Luzon,Own-Use,Aug,596113
+2024,Luzon,Own-Use,Sep,588929
+2024,Luzon,Own-Use,Oct,591737
+2024,Luzon,Own-Use,Nov,605640
+2024,Luzon,Own-Use,Dec,581669
+2024,Luzon,System Loss,Jan,633841
+2024,Luzon,System Loss,Feb,699892
+2024,Luzon,System Loss,Mar,628684
+2024,Luzon,System Loss,Apr,594724
+2024,Luzon,System Loss,May,882022
+2024,Luzon,System Loss,Jun,715503
+2024,Luzon,System Loss,Jul,718519
+2024,Luzon,System Loss,Aug,813335
+2024,Luzon,System Loss,Sep,611816
+2024,Luzon,System Loss,Oct,639800
+2024,Luzon,System Loss,Nov,682897
+2024,Luzon,System Loss,Dec,451810
+2024,Luzon,Total Consumption,Jan,6775449
+2024,Luzon,Total Consumption,Feb,7022499
+2024,Luzon,Total Consumption,Mar,6915845
+2024,Luzon,Total Consumption,Apr,7859604
+2024,Luzon,Total Consumption,May,8606995
+2024,Luzon,Total Consumption,Jun,8371653
+2024,Luzon,Total Consumption,Jul,7840068
+2024,Luzon,Total Consumption,Aug,7962915
+2024,Luzon,Total Consumption,Sep,7640210
+2024,Luzon,Total Consumption,Oct,7566945
+2024,Luzon,Total Consumption,Nov,7587513
+2024,Luzon,Total Consumption,Dec,7120117
+2024,Visayas,Residential,Jan,442011
+2024,Visayas,Residential,Feb,414320
+2024,Visayas,Residential,Mar,429874
+2024,Visayas,Residential,Apr,514738
+2024,Visayas,Residential,May,551082
+2024,Visayas,Residential,Jun,529518
+2024,Visayas,Residential,Jul,475073
+2024,Visayas,Residential,Aug,492710
+2024,Visayas,Residential,Sep,483699
+2024,Visayas,Residential,Oct,474605
+2024,Visayas,Residential,Nov,484980
+2024,Visayas,Residential,Dec,475484
+2024,Visayas,Commercial,Jan,166825
+2024,Visayas,Commercial,Feb,166774
+2024,Visayas,Commercial,Mar,166223
+2024,Visayas,Commercial,Apr,187064
+2024,Visayas,Commercial,May,193460
+2024,Visayas,Commercial,Jun,189526
+2024,Visayas,Commercial,Jul,176257
+2024,Visayas,Commercial,Aug,185936
+2024,Visayas,Commercial,Sep,185910
+2024,Visayas,Commercial,Oct,183585
+2024,Visayas,Commercial,Nov,187887
+2024,Visayas,Commercial,Dec,184865
+2024,Visayas,Industrial,Jan,428318
+2024,Visayas,Industrial,Feb,432928
+2024,Visayas,Industrial,Mar,418251
+2024,Visayas,Industrial,Apr,455423
+2024,Visayas,Industrial,May,459611
+2024,Visayas,Industrial,Jun,446173
+2024,Visayas,Industrial,Jul,428375
+2024,Visayas,Industrial,Aug,467925
+2024,Visayas,Industrial,Sep,464579
+2024,Visayas,Industrial,Oct,473819
+2024,Visayas,Industrial,Nov,471542
+2024,Visayas,Industrial,Dec,440422
+2024,Visayas,Others,Jan,60675
+2024,Visayas,Others,Feb,61626
+2024,Visayas,Others,Mar,61226
+2024,Visayas,Others,Apr,65512
+2024,Visayas,Others,May,68460
+2024,Visayas,Others,Jun,65237
+2024,Visayas,Others,Jul,62660
+2024,Visayas,Others,Aug,72413
+2024,Visayas,Others,Sep,70554
+2024,Visayas,Others,Oct,67290
+2024,Visayas,Others,Nov,74821
+2024,Visayas,Others,Dec,72080
+2024,Visayas,Total Sales,Jan,1097830
+2024,Visayas,Total Sales,Feb,1075648
+2024,Visayas,Total Sales,Mar,1075573
+2024,Visayas,Total Sales,Apr,1222737
+2024,Visayas,Total Sales,May,1272614
+2024,Visayas,Total Sales,Jun,1230454
+2024,Visayas,Total Sales,Jul,1142365
+2024,Visayas,Total Sales,Aug,1218984
+2024,Visayas,Total Sales,Sep,1204743
+2024,Visayas,Total Sales,Oct,1199299
+2024,Visayas,Total Sales,Nov,1219229
+2024,Visayas,Total Sales,Dec,1172852
+2024,Visayas,Own-Use,Jan,158767
+2024,Visayas,Own-Use,Feb,146587
+2024,Visayas,Own-Use,Mar,145393
+2024,Visayas,Own-Use,Apr,142148
+2024,Visayas,Own-Use,May,129949
+2024,Visayas,Own-Use,Jun,130575
+2024,Visayas,Own-Use,Jul,116766
+2024,Visayas,Own-Use,Aug,122212
+2024,Visayas,Own-Use,Sep,136166
+2024,Visayas,Own-Use,Oct,127902
+2024,Visayas,Own-Use,Nov,147106
+2024,Visayas,Own-Use,Dec,165432
+2024,Visayas,System Loss,Jan,156796
+2024,Visayas,System Loss,Feb,143996
+2024,Visayas,System Loss,Mar,136503
+2024,Visayas,System Loss,Apr,170449
+2024,Visayas,System Loss,May,190895
+2024,Visayas,System Loss,Jun,173758
+2024,Visayas,System Loss,Jul,152464
+2024,Visayas,System Loss,Aug,135563
+2024,Visayas,System Loss,Sep,160375
+2024,Visayas,System Loss,Oct,176872
+2024,Visayas,System Loss,Nov,179109
+2024,Visayas,System Loss,Dec,132999
+2024,Visayas,Total Consumption,Jan,1413393
+2024,Visayas,Total Consumption,Feb,1366231
+2024,Visayas,Total Consumption,Mar,1357469
+2024,Visayas,Total Consumption,Apr,1535334
+2024,Visayas,Total Consumption,May,1593458
+2024,Visayas,Total Consumption,Jun,1534788
+2024,Visayas,Total Consumption,Jul,1411595
+2024,Visayas,Total Consumption,Aug,1476760
+2024,Visayas,Total Consumption,Sep,1501283
+2024,Visayas,Total Consumption,Oct,1504073
+2024,Visayas,Total Consumption,Nov,1545444
+2024,Visayas,Total Consumption,Dec,1471283
+2024,Mindanao,Residential,Jan,458158
+2024,Mindanao,Residential,Feb,427767
+2024,Mindanao,Residential,Mar,437869
+2024,Mindanao,Residential,Apr,504112
+2024,Mindanao,Residential,May,518125
+2024,Mindanao,Residential,Jun,510824
+2024,Mindanao,Residential,Jul,465912
+2024,Mindanao,Residential,Aug,493814
+2024,Mindanao,Residential,Sep,485564
+2024,Mindanao,Residential,Oct,485782
+2024,Mindanao,Residential,Nov,503273
+2024,Mindanao,Residential,Dec,489248
+2024,Mindanao,Commercial,Jan,148885
+2024,Mindanao,Commercial,Feb,149361
+2024,Mindanao,Commercial,Mar,149955
+2024,Mindanao,Commercial,Apr,165372
+2024,Mindanao,Commercial,May,171119
+2024,Mindanao,Commercial,Jun,168514
+2024,Mindanao,Commercial,Jul,156445
+2024,Mindanao,Commercial,Aug,168030
+2024,Mindanao,Commercial,Sep,167213
+2024,Mindanao,Commercial,Oct,166257
+2024,Mindanao,Commercial,Nov,174770
+2024,Mindanao,Commercial,Dec,168470
+2024,Mindanao,Industrial,Jan,412329
+2024,Mindanao,Industrial,Feb,426554
+2024,Mindanao,Industrial,Mar,418123
+2024,Mindanao,Industrial,Apr,451284
+2024,Mindanao,Industrial,May,454669
+2024,Mindanao,Industrial,Jun,468236
+2024,Mindanao,Industrial,Jul,438146
+2024,Mindanao,Industrial,Aug,461057
+2024,Mindanao,Industrial,Sep,477167
+2024,Mindanao,Industrial,Oct,463932
+2024,Mindanao,Industrial,Nov,463449
+2024,Mindanao,Industrial,Dec,445647
+2024,Mindanao,Others,Jan,59568
+2024,Mindanao,Others,Feb,60203
+2024,Mindanao,Others,Mar,60282
+2024,Mindanao,Others,Apr,65551
+2024,Mindanao,Others,May,64792
+2024,Mindanao,Others,Jun,56171
+2024,Mindanao,Others,Jul,54181
+2024,Mindanao,Others,Aug,59888
+2024,Mindanao,Others,Sep,57635
+2024,Mindanao,Others,Oct,60832
+2024,Mindanao,Others,Nov,59782
+2024,Mindanao,Others,Dec,56187
+2024,Mindanao,Total Sales,Jan,1078938
+2024,Mindanao,Total Sales,Feb,1063885
+2024,Mindanao,Total Sales,Mar,1066228
+2024,Mindanao,Total Sales,Apr,1186318
+2024,Mindanao,Total Sales,May,1208705
+2024,Mindanao,Total Sales,Jun,1203745
+2024,Mindanao,Total Sales,Jul,1114684
+2024,Mindanao,Total Sales,Aug,1182790
+2024,Mindanao,Total Sales,Sep,1187579
+2024,Mindanao,Total Sales,Oct,1176804
+2024,Mindanao,Total Sales,Nov,1201275
+2024,Mindanao,Total Sales,Dec,1159553
+2024,Mindanao,Own-Use,Jan,129408
+2024,Mindanao,Own-Use,Feb,130071
+2024,Mindanao,Own-Use,Mar,145629
+2024,Mindanao,Own-Use,Apr,153809
+2024,Mindanao,Own-Use,May,150783
+2024,Mindanao,Own-Use,Jun,150988
+2024,Mindanao,Own-Use,Jul,135038
+2024,Mindanao,Own-Use,Aug,109909
+2024,Mindanao,Own-Use,Sep,131001
+2024,Mindanao,Own-Use,Oct,130386
+2024,Mindanao,Own-Use,Nov,130914
+2024,Mindanao,Own-Use,Dec,139347
+2024,Mindanao,System Loss,Jan,196878
+2024,Mindanao,System Loss,Feb,184379
+2024,Mindanao,System Loss,Mar,172280
+2024,Mindanao,System Loss,Apr,214834
+2024,Mindanao,System Loss,May,219486
+2024,Mindanao,System Loss,Jun,208842
+2024,Mindanao,System Loss,Jul,205759
+2024,Mindanao,System Loss,Aug,195553
+2024,Mindanao,System Loss,Sep,207758
+2024,Mindanao,System Loss,Oct,200368
+2024,Mindanao,System Loss,Nov,269617
+2024,Mindanao,System Loss,Dec,216358
+2024,Mindanao,Total Consumption,Jan,1405224
+2024,Mindanao,Total Consumption,Feb,1378334
+2024,Mindanao,Total Consumption,Mar,1384138
+2024,Mindanao,Total Consumption,Apr,1554962
+2024,Mindanao,Total Consumption,May,1578975
+2024,Mindanao,Total Consumption,Jun,1563575
+2024,Mindanao,Total Consumption,Jul,1455481
+2024,Mindanao,Total Consumption,Aug,1488252
+2024,Mindanao,Total Consumption,Sep,1526338
+2024,Mindanao,Total Consumption,Oct,1507558
+2024,Mindanao,Total Consumption,Nov,1601806
+2024,Mindanao,Total Consumption,Dec,1515258
+2024,Philippines,Residential,Jan,3044642
+2024,Philippines,Residential,Feb,2888943
+2024,Philippines,Residential,Mar,2970387
+2024,Philippines,Residential,Apr,3671019
+2024,Philippines,Residential,May,4061491
+2024,Philippines,Residential,Jun,3927562
+2024,Philippines,Residential,Jul,3556292
+2024,Philippines,Residential,Aug,3559554
+2024,Philippines,Residential,Sep,3466591
+2024,Philippines,Residential,Oct,3406726
+2024,Philippines,Residential,Nov,3402127
+2024,Philippines,Residential,Dec,3250044
+2024,Philippines,Commercial,Jan,2144984
+2024,Philippines,Commercial,Feb,2180991
+2024,Philippines,Commercial,Mar,2120317
+2024,Philippines,Commercial,Apr,2346383
+2024,Philippines,Commercial,May,2512654
+2024,Philippines,Commercial,Jun,2502107
+2024,Philippines,Commercial,Jul,2340555
+2024,Philippines,Commercial,Aug,2403719
+2024,Philippines,Commercial,Sep,2389510
+2024,Philippines,Commercial,Oct,2371115
+2024,Philippines,Commercial,Nov,2375889
+2024,Philippines,Commercial,Dec,2344700
+2024,Philippines,Industrial,Jan,2338113
+2024,Philippines,Industrial,Feb,2530489
+2024,Philippines,Industrial,Mar,2514174
+2024,Philippines,Industrial,Apr,2592171
+2024,Philippines,Industrial,May,2675795
+2024,Philippines,Industrial,Jun,2699895
+2024,Philippines,Industrial,Jul,2582867
+2024,Philippines,Industrial,Aug,2672530
+2024,Philippines,Industrial,Sep,2670039
+2024,Philippines,Industrial,Oct,2633012
+2024,Philippines,Industrial,Nov,2633286
+2024,Philippines,Industrial,Dec,2531523
+2024,Philippines,Others,Jan,275325
+2024,Philippines,Others,Feb,284063
+2024,Philippines,Others,Mar,289903
+2024,Philippines,Others,Apr,307068
+2024,Philippines,Others,May,316853
+2024,Philippines,Others,Jun,302105
+2024,Philippines,Others,Jul,293927
+2024,Philippines,Others,Aug,319437
+2024,Philippines,Others,Sep,305646
+2024,Philippines,Others,Oct,300658
+2024,Philippines,Others,Nov,308178
+2024,Philippines,Others,Dec,292777
+2024,Philippines,Total Sales,Jan,7803063
+2024,Philippines,Total Sales,Feb,7884485
+2024,Philippines,Total Sales,Mar,7894781
+2024,Philippines,Total Sales,Apr,8916641
+2024,Philippines,Total Sales,May,9566792
+2024,Philippines,Total Sales,Jun,9431669
+2024,Philippines,Total Sales,Jul,8773641
+2024,Philippines,Total Sales,Aug,8955240
+2024,Philippines,Total Sales,Sep,8831787
+2024,Philippines,Total Sales,Oct,8711511
+2024,Philippines,Total Sales,Nov,8719479
+2024,Philippines,Total Sales,Dec,8419043
+2024,Philippines,Own-Use,Jan,803488
+2024,Philippines,Own-Use,Feb,854312
+2024,Philippines,Own-Use,Mar,825204
+2024,Philippines,Own-Use,Apr,1053251
+2024,Philippines,Own-Use,May,920232
+2024,Philippines,Own-Use,Jun,940244
+2024,Philippines,Own-Use,Jul,856762
+2024,Philippines,Own-Use,Aug,828235
+2024,Philippines,Own-Use,Sep,856096
+2024,Philippines,Own-Use,Oct,850025
+2024,Philippines,Own-Use,Nov,883660
+2024,Philippines,Own-Use,Dec,886447
+2024,Philippines,System Loss,Jan,987515
+2024,Philippines,System Loss,Feb,1028267
+2024,Philippines,System Loss,Mar,937466
+2024,Philippines,System Loss,Apr,980008
+2024,Philippines,System Loss,May,1292404
+2024,Philippines,System Loss,Jun,1098103
+2024,Philippines,System Loss,Jul,1076741
+2024,Philippines,System Loss,Aug,1144451
+2024,Philippines,System Loss,Sep,979949
+2024,Philippines,System Loss,Oct,1017040
+2024,Philippines,System Loss,Nov,1131624
+2024,Philippines,System Loss,Dec,801167
+2024,Philippines,Total Consumption,Jan,9594067
+2024,Philippines,Total Consumption,Feb,9767064
+2024,Philippines,Total Consumption,Mar,9657451
+2024,Philippines,Total Consumption,Apr,10949900
+2024,Philippines,Total Consumption,May,11779428
+2024,Philippines,Total Consumption,Jun,11470016
+2024,Philippines,Total Consumption,Jul,10707144
+2024,Philippines,Total Consumption,Aug,10927927
+2024,Philippines,Total Consumption,Sep,10667832
+2024,Philippines,Total Consumption,Oct,10578576
+2024,Philippines,Total Consumption,Nov,10734763
+2024,Philippines,Total Consumption,Dec,10106658

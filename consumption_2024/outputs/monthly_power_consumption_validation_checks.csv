@@ -1,0 +1,137 @@
+Check,Region,Sector,Difference_MWh
+row_monthly_sum_equals_total,Luzon,Residential,-1
+row_monthly_sum_equals_total,Luzon,Commercial,-1
+row_monthly_sum_equals_total,Luzon,Industrial,-1
+row_monthly_sum_equals_total,Luzon,Others,0
+row_monthly_sum_equals_total,Luzon,Total Sales,1
+row_monthly_sum_equals_total,Luzon,Own-Use,1
+row_monthly_sum_equals_total,Luzon,System Loss,0
+row_monthly_sum_equals_total,Luzon,Total Consumption,0
+row_monthly_sum_equals_total,Visayas,Residential,0
+row_monthly_sum_equals_total,Visayas,Commercial,1
+row_monthly_sum_equals_total,Visayas,Industrial,1
+row_monthly_sum_equals_total,Visayas,Others,0
+row_monthly_sum_equals_total,Visayas,Total Sales,-1
+row_monthly_sum_equals_total,Visayas,Own-Use,1
+row_monthly_sum_equals_total,Visayas,System Loss,1
+row_monthly_sum_equals_total,Visayas,Total Consumption,1
+row_monthly_sum_equals_total,Mindanao,Residential,1
+row_monthly_sum_equals_total,Mindanao,Commercial,1
+row_monthly_sum_equals_total,Mindanao,Industrial,0
+row_monthly_sum_equals_total,Mindanao,Others,0
+row_monthly_sum_equals_total,Mindanao,Total Sales,1
+row_monthly_sum_equals_total,Mindanao,Own-Use,0
+row_monthly_sum_equals_total,Mindanao,System Loss,1
+row_monthly_sum_equals_total,Mindanao,Total Consumption,1
+row_monthly_sum_equals_total,Philippines,Residential,0
+row_monthly_sum_equals_total,Philippines,Commercial,-1
+row_monthly_sum_equals_total,Philippines,Industrial,-1
+row_monthly_sum_equals_total,Philippines,Others,1
+row_monthly_sum_equals_total,Philippines,Total Sales,3
+row_monthly_sum_equals_total,Philippines,Own-Use,0
+row_monthly_sum_equals_total,Philippines,System Loss,1
+row_monthly_sum_equals_total,Philippines,Total Consumption,1
+philippines_equals_islands_sum,Philippines,Residential,0
+philippines_equals_islands_sum,Philippines,Residential,1
+philippines_equals_islands_sum,Philippines,Residential,-1
+philippines_equals_islands_sum,Philippines,Residential,0
+philippines_equals_islands_sum,Philippines,Residential,0
+philippines_equals_islands_sum,Philippines,Residential,0
+philippines_equals_islands_sum,Philippines,Residential,-1
+philippines_equals_islands_sum,Philippines,Residential,0
+philippines_equals_islands_sum,Philippines,Residential,0
+philippines_equals_islands_sum,Philippines,Residential,0
+philippines_equals_islands_sum,Philippines,Residential,0
+philippines_equals_islands_sum,Philippines,Residential,1
+philippines_equals_islands_sum,Philippines,Residential,0
+philippines_equals_islands_sum,Philippines,Commercial,0
+philippines_equals_islands_sum,Philippines,Commercial,-1
+philippines_equals_islands_sum,Philippines,Commercial,0
+philippines_equals_islands_sum,Philippines,Commercial,0
+philippines_equals_islands_sum,Philippines,Commercial,1
+philippines_equals_islands_sum,Philippines,Commercial,1
+philippines_equals_islands_sum,Philippines,Commercial,0
+philippines_equals_islands_sum,Philippines,Commercial,1
+philippines_equals_islands_sum,Philippines,Commercial,0
+philippines_equals_islands_sum,Philippines,Commercial,0
+philippines_equals_islands_sum,Philippines,Commercial,0
+philippines_equals_islands_sum,Philippines,Commercial,0
+philippines_equals_islands_sum,Philippines,Commercial,0
+philippines_equals_islands_sum,Philippines,Industrial,0
+philippines_equals_islands_sum,Philippines,Industrial,0
+philippines_equals_islands_sum,Philippines,Industrial,0
+philippines_equals_islands_sum,Philippines,Industrial,-1
+philippines_equals_islands_sum,Philippines,Industrial,0
+philippines_equals_islands_sum,Philippines,Industrial,0
+philippines_equals_islands_sum,Philippines,Industrial,1
+philippines_equals_islands_sum,Philippines,Industrial,-1
+philippines_equals_islands_sum,Philippines,Industrial,0
+philippines_equals_islands_sum,Philippines,Industrial,1
+philippines_equals_islands_sum,Philippines,Industrial,0
+philippines_equals_islands_sum,Philippines,Industrial,1
+philippines_equals_islands_sum,Philippines,Industrial,0
+philippines_equals_islands_sum,Philippines,Others,0
+philippines_equals_islands_sum,Philippines,Others,0
+philippines_equals_islands_sum,Philippines,Others,0
+philippines_equals_islands_sum,Philippines,Others,0
+philippines_equals_islands_sum,Philippines,Others,0
+philippines_equals_islands_sum,Philippines,Others,0
+philippines_equals_islands_sum,Philippines,Others,0
+philippines_equals_islands_sum,Philippines,Others,0
+philippines_equals_islands_sum,Philippines,Others,-1
+philippines_equals_islands_sum,Philippines,Others,0
+philippines_equals_islands_sum,Philippines,Others,-1
+philippines_equals_islands_sum,Philippines,Others,1
+philippines_equals_islands_sum,Philippines,Others,0
+philippines_equals_islands_sum,Philippines,Total Sales,0
+philippines_equals_islands_sum,Philippines,Total Sales,0
+philippines_equals_islands_sum,Philippines,Total Sales,1
+philippines_equals_islands_sum,Philippines,Total Sales,0
+philippines_equals_islands_sum,Philippines,Total Sales,-1
+philippines_equals_islands_sum,Philippines,Total Sales,0
+philippines_equals_islands_sum,Philippines,Total Sales,1
+philippines_equals_islands_sum,Philippines,Total Sales,0
+philippines_equals_islands_sum,Philippines,Total Sales,-1
+philippines_equals_islands_sum,Philippines,Total Sales,0
+philippines_equals_islands_sum,Philippines,Total Sales,-1
+philippines_equals_islands_sum,Philippines,Total Sales,0
+philippines_equals_islands_sum,Philippines,Total Sales,1
+philippines_equals_islands_sum,Philippines,Own-Use,0
+philippines_equals_islands_sum,Philippines,Own-Use,0
+philippines_equals_islands_sum,Philippines,Own-Use,0
+philippines_equals_islands_sum,Philippines,Own-Use,1
+philippines_equals_islands_sum,Philippines,Own-Use,1
+philippines_equals_islands_sum,Philippines,Own-Use,0
+philippines_equals_islands_sum,Philippines,Own-Use,0
+philippines_equals_islands_sum,Philippines,Own-Use,1
+philippines_equals_islands_sum,Philippines,Own-Use,0
+philippines_equals_islands_sum,Philippines,Own-Use,0
+philippines_equals_islands_sum,Philippines,Own-Use,0
+philippines_equals_islands_sum,Philippines,Own-Use,-1
+philippines_equals_islands_sum,Philippines,Own-Use,0
+philippines_equals_islands_sum,Philippines,System Loss,0
+philippines_equals_islands_sum,Philippines,System Loss,0
+philippines_equals_islands_sum,Philippines,System Loss,-1
+philippines_equals_islands_sum,Philippines,System Loss,1
+philippines_equals_islands_sum,Philippines,System Loss,1
+philippines_equals_islands_sum,Philippines,System Loss,0
+philippines_equals_islands_sum,Philippines,System Loss,-1
+philippines_equals_islands_sum,Philippines,System Loss,0
+philippines_equals_islands_sum,Philippines,System Loss,0
+philippines_equals_islands_sum,Philippines,System Loss,0
+philippines_equals_islands_sum,Philippines,System Loss,1
+philippines_equals_islands_sum,Philippines,System Loss,0
+philippines_equals_islands_sum,Philippines,System Loss,0
+philippines_equals_islands_sum,Philippines,Total Consumption,1
+philippines_equals_islands_sum,Philippines,Total Consumption,0
+philippines_equals_islands_sum,Philippines,Total Consumption,-1
+philippines_equals_islands_sum,Philippines,Total Consumption,0
+philippines_equals_islands_sum,Philippines,Total Consumption,0
+philippines_equals_islands_sum,Philippines,Total Consumption,0
+philippines_equals_islands_sum,Philippines,Total Consumption,0
+philippines_equals_islands_sum,Philippines,Total Consumption,0
+philippines_equals_islands_sum,Philippines,Total Consumption,1
+philippines_equals_islands_sum,Philippines,Total Consumption,0
+philippines_equals_islands_sum,Philippines,Total Consumption,0
+philippines_equals_islands_sum,Philippines,Total Consumption,0
+philippines_equals_islands_sum,Philippines,Total Consumption,0
