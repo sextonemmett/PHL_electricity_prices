@@ -52,7 +52,8 @@ def get_paths() -> tuple[Path, Path, Path]:
     base_dir = Path(__file__).resolve().parents[1]
     data_dir = base_dir / "data"
     output_dir = base_dir / "outputs"
-    output_dir.mkdir(parents=True, exist_ok=True)
+    (output_dir / "png").mkdir(parents=True, exist_ok=True)
+    (output_dir / "csv").mkdir(parents=True, exist_ok=True)
     return base_dir, data_dir, output_dir
 
 
@@ -209,7 +210,7 @@ def plot_island_monthly_lines(wide_df: pd.DataFrame, output_dir: Path) -> Path:
     fig.suptitle("Monthly Consumption by Sector and Island Group (2024)", y=1.02, fontsize=15, weight="bold")
     fig.tight_layout()
 
-    out_path = output_dir / "island_sector_monthly_lines_shared_y.png"
+    out_path = output_dir / "png" / "island_sector_monthly_lines_shared_y.png"
     fig.savefig(out_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
     return out_path
@@ -248,7 +249,7 @@ def plot_island_sector_share_stacked(wide_df: pd.DataFrame, output_dir: Path) ->
     )
     fig.tight_layout()
 
-    out_path = output_dir / "island_sector_share_stacked_100pct_bar.png"
+    out_path = output_dir / "png" / "island_sector_share_stacked_100pct_bar.png"
     fig.savefig(out_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
     return out_path
@@ -279,7 +280,7 @@ def plot_island_sales_ownuse_loss_stacked(wide_df: pd.DataFrame, output_dir: Pat
     ax.legend(title="", frameon=False)
     fig.tight_layout()
 
-    out_path = output_dir / "island_sales_ownuse_systemloss_stacked_bar.png"
+    out_path = output_dir / "png" / "island_sales_ownuse_systemloss_stacked_bar.png"
     fig.savefig(out_path, dpi=300)
     plt.close(fig)
     return out_path
@@ -293,9 +294,9 @@ def main() -> None:
     checks_df = validate_totals(wide_df)
     long_df = build_long_table(wide_df)
 
-    wide_output = output_dir / "monthly_power_consumption_wide.csv"
-    long_output = output_dir / "monthly_power_consumption_long.csv"
-    checks_output = output_dir / "monthly_power_consumption_validation_checks.csv"
+    wide_output = output_dir / "csv" / "monthly_power_consumption_wide.csv"
+    long_output = output_dir / "csv" / "monthly_power_consumption_long.csv"
+    checks_output = output_dir / "csv" / "monthly_power_consumption_validation_checks.csv"
     lines_plot_output = plot_island_monthly_lines(wide_df, output_dir)
     sector_share_plot_output = plot_island_sector_share_stacked(wide_df, output_dir)
     stacked_plot_output = plot_island_sales_ownuse_loss_stacked(wide_df, output_dir)

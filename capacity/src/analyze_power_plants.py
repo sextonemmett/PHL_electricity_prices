@@ -79,7 +79,8 @@ def get_base_paths() -> tuple[Path, Path, Path]:
     base_dir = Path(__file__).resolve().parents[1]
     data_dir = base_dir / "data"
     output_dir = base_dir / "outputs"
-    output_dir.mkdir(parents=True, exist_ok=True)
+    (output_dir / "png").mkdir(parents=True, exist_ok=True)
+    (output_dir / "csv").mkdir(parents=True, exist_ok=True)
     return base_dir, data_dir, output_dir
 
 
@@ -224,10 +225,10 @@ def country_generation_mix(
     ax.grid(axis="x", visible=False)
     ax.legend(title="Generator Type", bbox_to_anchor=(1.01, 1), loc="upper left")
     fig.tight_layout()
-    fig.savefig(output_dir / "country_generation_mix_stacked.png", dpi=300)
+    fig.savefig(output_dir / "png" / "country_generation_mix_stacked.png", dpi=300)
     plt.close(fig)
 
-    mix.to_csv(output_dir / "country_generation_mix_summary.csv", index=False)
+    mix.to_csv(output_dir / "csv" / "country_generation_mix_summary.csv", index=False)
 
 
 def country_fleet_age(
@@ -259,10 +260,10 @@ def country_fleet_age(
     ax.grid(axis="x", visible=False)
     ax.legend(title="Generator Type", bbox_to_anchor=(1.01, 1), loc="upper left")
     fig.tight_layout()
-    fig.savefig(output_dir / "country_fleet_age_grouped.png", dpi=300)
+    fig.savefig(output_dir / "png" / "country_fleet_age_grouped.png", dpi=300)
     plt.close(fig)
 
-    age_df.to_csv(output_dir / "country_fleet_age_summary.csv", index=False)
+    age_df.to_csv(output_dir / "csv" / "country_fleet_age_summary.csv", index=False)
 
 
 def country_total_weighted_age(country_df: pd.DataFrame, countries: List[str], output_dir: Path) -> None:
@@ -288,10 +289,10 @@ def country_total_weighted_age(country_df: pd.DataFrame, countries: List[str], o
     ax.set_ylabel("Capacity-Weighted Average Age (years)")
     ax.grid(axis="x", visible=False)
     fig.tight_layout()
-    fig.savefig(output_dir / "country_total_weighted_age.png", dpi=300)
+    fig.savefig(output_dir / "png" / "country_total_weighted_age.png", dpi=300)
     plt.close(fig)
 
-    age_df.to_csv(output_dir / "country_total_weighted_age_summary.csv", index=False)
+    age_df.to_csv(output_dir / "csv" / "country_total_weighted_age_summary.csv", index=False)
 
 
 def ownership_concentration(country_df: pd.DataFrame, countries: List[str], output_dir: Path, top_n: int = 7) -> None:
@@ -340,10 +341,10 @@ def ownership_concentration(country_df: pd.DataFrame, countries: List[str], outp
         ax.set_title(country, weight="bold")
     fig.suptitle("Ownership Share by Country (Top 7 Owners + Rest)", fontsize=18, weight="bold")
     fig.tight_layout(rect=[0, 0, 1, 0.98])
-    fig.savefig(output_dir / "ownership_concentration_top7_plus_rest_pies.png", dpi=300)
+    fig.savefig(output_dir / "png" / "ownership_concentration_top7_plus_rest_pies.png", dpi=300)
     plt.close(fig)
 
-    own.to_csv(output_dir / "ownership_concentration_summary.csv", index=False)
+    own.to_csv(output_dir / "csv" / "ownership_concentration_summary.csv", index=False)
 
 
 def classify_island_group(
@@ -426,7 +427,7 @@ def philippines_island_analysis(
     ax.yaxis.set_major_formatter(StrMethodFormatter("{x:,.0f}"))
     ax.grid(axis="x", visible=False)
     fig.tight_layout()
-    fig.savefig(output_dir / "philippines_island_total_capacity_bar.png", dpi=300)
+    fig.savefig(output_dir / "png" / "philippines_island_total_capacity_bar.png", dpi=300)
     plt.close(fig)
 
     pivot = (
@@ -452,7 +453,7 @@ def philippines_island_analysis(
     ax.grid(axis="x", visible=False)
     ax.legend(title="Generator Type", bbox_to_anchor=(1.01, 1), loc="upper left")
     fig.tight_layout()
-    fig.savefig(output_dir / "philippines_island_generation_mix_stacked.png", dpi=300)
+    fig.savefig(output_dir / "png" / "philippines_island_generation_mix_stacked.png", dpi=300)
     plt.close(fig)
 
     island_age = (
@@ -476,11 +477,11 @@ def philippines_island_analysis(
     ax.set_ylabel("Capacity-Weighted Average Age (years)")
     ax.grid(axis="x", visible=False)
     fig.tight_layout()
-    fig.savefig(output_dir / "philippines_island_weighted_age.png", dpi=300)
+    fig.savefig(output_dir / "png" / "philippines_island_weighted_age.png", dpi=300)
     plt.close(fig)
 
-    island_mix.to_csv(output_dir / "philippines_island_mix_summary.csv", index=False)
-    island_age.to_csv(output_dir / "philippines_island_age_summary.csv", index=False)
+    island_mix.to_csv(output_dir / "csv" / "philippines_island_mix_summary.csv", index=False)
+    island_age.to_csv(output_dir / "csv" / "philippines_island_age_summary.csv", index=False)
 
 
 def main() -> None:
@@ -509,7 +510,7 @@ def main() -> None:
 
     totals = country_df.groupby("Country/area", as_index=False)["Capacity (MW)"].sum()
     totals["Capacity (MW)"] = totals["Capacity (MW)"].round(2)
-    totals.to_csv(output_dir / "country_total_operating_capacity_mw.csv", index=False)
+    totals.to_csv(output_dir / "csv" / "country_total_operating_capacity_mw.csv", index=False)
 
     print(f"Analysis complete. Outputs saved to: {output_dir}")
     print(f"Data source: {data_file.name}")
