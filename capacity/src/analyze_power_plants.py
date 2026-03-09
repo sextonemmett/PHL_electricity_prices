@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import urllib.request
 from datetime import date
 from pathlib import Path
 from typing import Dict, List
@@ -8,8 +10,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from matplotlib.ticker import EngFormatter, PercentFormatter
-from shapely.geometry import Point, Polygon
+from matplotlib.ticker import PercentFormatter, StrMethodFormatter
+from shapely.geometry import Point, shape
+from shapely.geometry.base import BaseGeometry
+from shapely.ops import unary_union
+from shapely.prepared import PreparedGeometry, prep
 
 
 COUNTRIES = [
@@ -22,6 +27,32 @@ COUNTRIES = [
 ]
 
 ISLAND_GROUPS = ["Luzon", "Visayas", "Mindanao"]
+
+PHL_ADM1_GEOJSON_URL = (
+    "https://github.com/wmgeolab/geoBoundaries/raw/41af8f1/releaseData/gbOpen/PHL/ADM1/"
+    "geoBoundaries-PHL-ADM1_simplified.geojson"
+)
+
+PHL_REGION_TO_ISLAND_GROUP = {
+    "NCR": "Luzon",
+    "CAR": "Luzon",
+    "Ilocos Region": "Luzon",
+    "Cagayan Valley": "Luzon",
+    "Central Luzon": "Luzon",
+    "Calabarzon": "Luzon",
+    "Mimaropa": "Luzon",
+    "Bicol Region": "Luzon",
+    "Western Visayas": "Visayas",
+    "Central Visayas": "Visayas",
+    "Eastern Visayas": "Visayas",
+    "Zamboanga Peninsula": "Mindanao",
+    "Northern Mindanao": "Mindanao",
+    "Davao Region": "Mindanao",
+    "Soccsksargen": "Mindanao",
+    "Caraga": "Mindanao",
+    "ARMM": "Mindanao",
+    "BARMM": "Mindanao",
+}
 
 
 def setup_style() -> None:
@@ -50,6 +81,34 @@ def get_base_paths() -> tuple[Path, Path, Path]:
     output_dir = base_dir / "outputs"
     output_dir.mkdir(parents=True, exist_ok=True)
     return base_dir, data_dir, output_dir
+
+
+def load_philippines_island_polygons(base_dir: Path) -> Dict[str, BaseGeometry]:
+    cache_dir = base_dir / ".cache"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    geojson_path = cache_dir / "geoBoundaries-PHL-ADM1_simplified.geojson"
+
+    if not geojson_path.exists():
+        urllib.request.urlretrieve(PHL_ADM1_GEOJSON_URL, geojson_path)  # noqa: S310
+
+    with geojson_path.open("r", encoding="utf-8") as f:
+        geo = json.load(f)
+
+    grouped_geometries: Dict[str, List[BaseGeometry]] = {k: [] for k in ISLAND_GROUPS}
+    for feature in geo.get("features", []):
+        region_name = str(feature.get("properties", {}).get("shapeName", "")).strip()
+        island_group = PHL_REGION_TO_ISLAND_GROUP.get(region_name)
+        if island_group is None:
+            continue
+        grouped_geometries[island_group].append(shape(feature["geometry"]))
+
+    polygons: Dict[str, BaseGeometry] = {}
+    for island_group, geoms in grouped_geometries.items():
+        if not geoms:
+            raise RuntimeError(f"No geometries found for island group '{island_group}' from ADM1 data.")
+        polygons[island_group] = unary_union(geoms).buffer(0)
+
+    return polygons
 
 
 def find_single_data_file(data_dir: Path) -> Path:
@@ -85,6 +144,7 @@ def prepare_operating_data(df: pd.DataFrame) -> pd.DataFrame:
         "Capacity (MW)",
         "Start year",
         "Status",
+        "Owner(s)",
         "Owner(s) GEM Entity ID",
         "Latitude",
         "Longitude",
@@ -100,6 +160,7 @@ def prepare_operating_data(df: pd.DataFrame) -> pd.DataFrame:
     out["Start year"] = pd.to_numeric(out["Start year"], errors="coerce")
     out["Latitude"] = pd.to_numeric(out["Latitude"], errors="coerce")
     out["Longitude"] = pd.to_numeric(out["Longitude"], errors="coerce")
+    out["Owner(s)"] = out["Owner(s)"].fillna("Unknown").astype(str).str.strip().replace("", "Unknown")
     out["Owner(s) GEM Entity ID"] = (
         out["Owner(s) GEM Entity ID"].fillna("Unknown").astype(str).str.strip().replace("", "Unknown")
     )
@@ -204,9 +265,38 @@ def country_fleet_age(
     age_df.to_csv(output_dir / "country_fleet_age_summary.csv", index=False)
 
 
-def ownership_concentration(country_df: pd.DataFrame, countries: List[str], output_dir: Path, top_n: int = 10) -> None:
+def country_total_weighted_age(country_df: pd.DataFrame, countries: List[str], output_dir: Path) -> None:
+    age_df = (
+        country_df.groupby("Country/area", as_index=False)
+        .apply(capacity_weighted_age, include_groups=False)
+        .rename(columns={None: "Capacity_Weighted_Age_Years"})
+    )
+    age_df["Country/area"] = pd.Categorical(age_df["Country/area"], categories=countries, ordered=True)
+    age_df = age_df.sort_values("Country/area")
+
+    fig, ax = plt.subplots(figsize=(12, 7))
+    sns.barplot(
+        data=age_df,
+        x="Country/area",
+        y="Capacity_Weighted_Age_Years",
+        order=countries,
+        color="#4f7cac",
+        ax=ax,
+    )
+    ax.set_title("Capacity-Weighted Average Fleet Age by Country", pad=14, weight="bold")
+    ax.set_xlabel("")
+    ax.set_ylabel("Capacity-Weighted Average Age (years)")
+    ax.grid(axis="x", visible=False)
+    fig.tight_layout()
+    fig.savefig(output_dir / "country_total_weighted_age.png", dpi=300)
+    plt.close(fig)
+
+    age_df.to_csv(output_dir / "country_total_weighted_age_summary.csv", index=False)
+
+
+def ownership_concentration(country_df: pd.DataFrame, countries: List[str], output_dir: Path, top_n: int = 7) -> None:
     own = (
-        country_df.groupby(["Country/area", "Owner(s) GEM Entity ID"], as_index=False)["Capacity (MW)"]
+        country_df.groupby(["Country/area", "Owner(s)"], as_index=False)["Capacity (MW)"]
         .sum()
         .rename(columns={"Capacity (MW)": "Capacity_MW"})
     )
@@ -220,84 +310,89 @@ def ownership_concentration(country_df: pd.DataFrame, countries: List[str], outp
     axes = axes.ravel()
     for i, country in enumerate(countries):
         ax = axes[i]
-        top = (
-            own[own["Country/area"] == country]
-            .sort_values("Capacity_MW", ascending=False)
-            .head(top_n)
-            .sort_values("Capacity_MW", ascending=True)
+        country_own = own[own["Country/area"] == country].sort_values("Capacity_MW", ascending=False)
+        top = country_own.head(top_n).copy()
+        rest_capacity = country_own.iloc[top_n:]["Capacity_MW"].sum()
+        if rest_capacity > 0:
+            rest_row = pd.DataFrame(
+                [
+                    {
+                        "Country/area": country,
+                        "Owner(s)": "Rest",
+                        "Capacity_MW": rest_capacity,
+                        "Country_Total_MW": country_own["Country_Total_MW"].iloc[0],
+                        "Capacity_Share": rest_capacity / country_own["Country_Total_MW"].iloc[0],
+                    }
+                ]
+            )
+            plot_df = pd.concat([top, rest_row], ignore_index=True)
+        else:
+            plot_df = top
+
+        ax.pie(
+            plot_df["Capacity_MW"],
+            labels=plot_df["Owner(s)"],
+            autopct=lambda p: f"{p:.1f}%" if p >= 4 else "",
+            startangle=90,
+            counterclock=False,
+            textprops={"fontsize": 9},
         )
-        ax.barh(top["Owner(s) GEM Entity ID"], top["Capacity_Share"], color="#4a6fa5", alpha=0.88)
         ax.set_title(country, weight="bold")
-        ax.xaxis.set_major_formatter(PercentFormatter(1.0))
-        ax.set_xlabel("Capacity Share")
-        ax.set_ylabel("Owner GEM Entity ID")
-        ax.grid(axis="y", visible=False)
-    fig.suptitle("Ownership Concentration: Top Owners by Country (Operating Capacity)", fontsize=18, weight="bold")
+    fig.suptitle("Ownership Share by Country (Top 7 Owners + Rest)", fontsize=18, weight="bold")
     fig.tight_layout(rect=[0, 0, 1, 0.98])
-    fig.savefig(output_dir / "ownership_concentration_top10_by_country.png", dpi=300)
+    fig.savefig(output_dir / "ownership_concentration_top7_plus_rest_pies.png", dpi=300)
     plt.close(fig)
 
     own.to_csv(output_dir / "ownership_concentration_summary.csv", index=False)
 
 
-def classify_island_group(lat: float, lon: float, polygons: Dict[str, Polygon]) -> str:
+def classify_island_group(
+    lat: float,
+    lon: float,
+    polygons: Dict[str, BaseGeometry],
+    prepared_polygons: Dict[str, PreparedGeometry],
+    prepared_buffered_polygons: Dict[str, PreparedGeometry],
+) -> str:
     if pd.isna(lat) or pd.isna(lon):
         return "Unknown"
     point = Point(lon, lat)
-    for name, poly in polygons.items():
-        if poly.contains(point):
+
+    # Primary pass: exact polygon match including border points.
+    for name, poly in prepared_polygons.items():
+        if poly.covers(point):
             return name
 
-    if lat >= 12.2:
-        return "Luzon"
-    if lat >= 9.0:
-        return "Visayas"
-    return "Mindanao"
+    # Secondary pass: include near-shore coordinates and slight geocoding imprecision.
+    for name, poly in prepared_buffered_polygons.items():
+        if poly.covers(point):
+            return name
+
+    # Tertiary pass: assign to nearest island polygon if reasonably close.
+    distances = {name: point.distance(poly) for name, poly in polygons.items()}
+    nearest_name = min(distances, key=distances.get)
+    if distances[nearest_name] <= 1.2:
+        return nearest_name
+
+    # Otherwise, keep unclassified points explicit for review.
+    return "Unknown"
 
 
 def philippines_island_analysis(
-    ph_df: pd.DataFrame, type_order: List[str], type_colors: Dict[str, tuple], output_dir: Path
+    ph_df: pd.DataFrame, type_order: List[str], type_colors: Dict[str, tuple], output_dir: Path, base_dir: Path
 ) -> None:
-    polygons = {
-        "Luzon": Polygon(
-            [
-                (116.0, 14.2),
-                (120.3, 11.6),
-                (124.8, 11.8),
-                (126.5, 14.2),
-                (126.1, 18.8),
-                (122.3, 20.8),
-                (118.0, 19.4),
-                (116.0, 16.0),
-            ]
-        ),
-        "Visayas": Polygon(
-            [
-                (117.3, 12.5),
-                (124.0, 12.6),
-                (126.1, 11.5),
-                (125.8, 9.3),
-                (122.0, 8.8),
-                (118.5, 9.1),
-                (117.3, 10.5),
-            ]
-        ),
-        "Mindanao": Polygon(
-            [
-                (119.4, 9.7),
-                (126.1, 9.7),
-                (127.5, 8.2),
-                (127.3, 5.0),
-                (124.2, 4.0),
-                (120.5, 4.3),
-                (119.0, 6.8),
-            ]
-        ),
-    }
+    polygons = load_philippines_island_polygons(base_dir)
+    prepared_polygons = {name: prep(poly) for name, poly in polygons.items()}
+    prepared_buffered_polygons = {name: prep(poly.buffer(0.55)) for name, poly in polygons.items()}
 
     ph = ph_df.copy()
     ph["Island_Group"] = ph.apply(
-        lambda x: classify_island_group(x["Latitude"], x["Longitude"], polygons),
+        lambda x: classify_island_group(
+            x["Latitude"],
+            x["Longitude"],
+            polygons,
+            prepared_polygons,
+            prepared_buffered_polygons,
+        ),
         axis=1,
     )
     ph = ph[ph["Island_Group"].isin(ISLAND_GROUPS)].copy()
@@ -312,6 +407,27 @@ def philippines_island_analysis(
     )
     island_mix = island_mix.merge(island_totals, on="Island_Group", how="left")
     island_mix["Capacity_Share"] = island_mix["Capacity_MW"] / island_mix["Island_Total_MW"]
+
+    island_totals["Island_Group"] = pd.Categorical(island_totals["Island_Group"], categories=ISLAND_GROUPS, ordered=True)
+    island_totals = island_totals.sort_values("Island_Group")
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.barplot(
+        data=island_totals,
+        x="Island_Group",
+        y="Island_Total_MW",
+        order=ISLAND_GROUPS,
+        color="#3f8f63",
+        ax=ax,
+    )
+    ax.set_title("Philippines Total Operating Capacity by Island Group", pad=14, weight="bold")
+    ax.set_xlabel("")
+    ax.set_ylabel("Total Capacity (MW)")
+    ax.yaxis.set_major_formatter(StrMethodFormatter("{x:,.0f}"))
+    ax.grid(axis="x", visible=False)
+    fig.tight_layout()
+    fig.savefig(output_dir / "philippines_island_total_capacity_bar.png", dpi=300)
+    plt.close(fig)
 
     pivot = (
         island_mix.pivot(index="Island_Group", columns="Type", values="Capacity_Share")
@@ -369,7 +485,7 @@ def philippines_island_analysis(
 
 def main() -> None:
     setup_style()
-    _, data_dir, output_dir = get_base_paths()
+    base_dir, data_dir, output_dir = get_base_paths()
     data_file = find_single_data_file(data_dir)
     raw = load_data(data_file)
     operating = prepare_operating_data(raw)
@@ -385,10 +501,11 @@ def main() -> None:
 
     country_generation_mix(country_df, COUNTRIES, type_order, type_colors, output_dir)
     country_fleet_age(country_df, COUNTRIES, type_order, type_colors, output_dir)
-    ownership_concentration(country_df, COUNTRIES, output_dir, top_n=10)
+    country_total_weighted_age(country_df, COUNTRIES, output_dir)
+    ownership_concentration(country_df, COUNTRIES, output_dir, top_n=7)
 
     ph_df = operating[operating["Country/area"] == "Philippines"].copy()
-    philippines_island_analysis(ph_df, type_order, type_colors, output_dir)
+    philippines_island_analysis(ph_df, type_order, type_colors, output_dir, base_dir)
 
     totals = country_df.groupby("Country/area", as_index=False)["Capacity (MW)"].sum()
     totals["Capacity (MW)"] = totals["Capacity (MW)"].round(2)
