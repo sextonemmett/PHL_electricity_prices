@@ -1,0 +1,11 @@
+metric,label,2021,2022,2023,2024,2025,years_present
+Bilateral_Quantity_GWh,Bilateral Quantity (GWh),True,True,True,True,True,5
+Daily_Average_MQ_GWh,Daily Average MQ1 (GWh),True,True,True,True,True,5
+Metered_Quantity_GWh,Metered Quantity (GWh),True,True,True,True,True,5
+Spot_Quantity_GWh,Spot Quantity (GWh),True,True,True,True,True,5
+Customer_ESSP_PHP_per_kWh,Customer ESSP2 (PhP/KWh),True,True,False,False,False,2
+ESSP_PHP_per_kWh,ESSP2 (PhP/KWh),False,False,False,True,True,2
+Trading_Amount_Billion_PHP,Trading Amount (Billion PHP),False,False,False,True,True,2
+LVM_ESSP_PHP_per_kWh,LVM ESSP2 (PhP/KWh),False,False,True,False,False,1
+LuzVis_ESSP_PHP_per_kWh,Luz-Vis ESSP2 (PhP/KWh),False,False,True,False,False,1
+Mindanao_ESSP_PHP_per_kWh,Mindanao ESSP2 (PhP/KWh),False,False,True,False,False,1

@@ -1,0 +1,3 @@
+year_page,report_id,doc_title,pdf_path,error
+2021,3231,November 2021 Market Operations Highlights,/Users/emmettsexton/Documents/GitHub/PHL_electricity_prices/iemop_market_transactions_2021_2025/data/raw_pdfs/2021_2021_11_3231_November_2021_Market_Operations_Highlights.pdf,Could not parse billing months from BILLING PERIOD or SETTLEMENT DATA (Could not find 'SETTLEMENT DATA' line.)
+2022,3344,February 2022 Market Operations Highlights,/Users/emmettsexton/Documents/GitHub/PHL_electricity_prices/iemop_market_transactions_2021_2025/data/raw_pdfs/2022_2022_02_3344_February_2022_Market_Operations_Highlights.pdf,Not a PDF file signature; likely Office file uploaded with .pdf extension.
