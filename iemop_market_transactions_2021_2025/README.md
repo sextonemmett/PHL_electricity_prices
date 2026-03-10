@@ -36,5 +36,6 @@ QC charts are written to `iemop_market_transactions_2021_2025/outputs/png/`:
 - `qc_metric_small_multiples.png`
 - `qc_energy_balance_by_scope.png`
 - `qc_6line_quantities_lv_vs_lvm.png`
+- `qc_essp_pre_post_2023_05.png`
 - `qc_overlap_heatmap.png`
 - `qc_top_overlap_discrepancies.png`

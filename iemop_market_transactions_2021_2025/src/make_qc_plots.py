@@ -245,6 +245,86 @@ def make_six_line_quantities_plot(monthly: pd.DataFrame, output_path: Path) -> N
     plt.close(fig)
 
 
+def make_essp_pre_post_plot(monthly: pd.DataFrame, output_path: Path) -> None:
+    break_month = pd.Timestamp("2023-05-01")
+
+    pre = monthly[
+        (monthly["metric"] == "Customer_ESSP_PHP_per_kWh")
+        & (monthly["market_scope"] == "Luzon_Visayas")
+        & (monthly["billing_month"] < break_month)
+    ][["billing_month", "value"]].copy()
+    pre = pre.sort_values("billing_month")
+
+    post_candidates = monthly[
+        (monthly["market_scope"] == "Luzon_Visayas_Mindanao")
+        & (monthly["metric"].isin(["ESSP_PHP_per_kWh", "LVM_ESSP_PHP_per_kWh"]))
+        & (monthly["billing_month"] >= break_month)
+    ][["billing_month", "metric", "value"]].copy()
+
+    post_priority = (
+        post_candidates.assign(
+            metric_priority=post_candidates["metric"].map({"ESSP_PHP_per_kWh": 0, "LVM_ESSP_PHP_per_kWh": 1})
+        )
+        .sort_values(["billing_month", "metric_priority"])
+        .drop_duplicates(subset=["billing_month"], keep="first")
+        .sort_values("billing_month")
+    )
+    post = post_priority[["billing_month", "value"]]
+
+    fig, ax = plt.subplots(figsize=(14, 6.5))
+    min_month = min(pre["billing_month"].min(), post["billing_month"].min())
+    max_month = max(pre["billing_month"].max(), post["billing_month"].max())
+    start_year = min_month.year
+    end_year = max_month.year
+
+    first_summer = True
+    for year in range(start_year, end_year + 1):
+        summer_start = pd.Timestamp(year=year, month=4, day=1)
+        summer_end = pd.Timestamp(year=year, month=7, day=1)
+        if summer_end < min_month or summer_start > max_month:
+            continue
+        ax.axvspan(
+            summer_start,
+            summer_end,
+            color="#d9d9d9",
+            alpha=0.35,
+            label="Summer months" if first_summer else None,
+            zorder=0,
+        )
+        first_summer = False
+
+    ax.plot(
+        pre["billing_month"],
+        pre["value"],
+        marker="o",
+        markersize=3.2,
+        linewidth=2.2,
+        color="#1f77b4",
+        label="Pre-2023-05 ESSP (Customer ESSP, Luzon+Visayas)",
+    )
+    ax.plot(
+        post["billing_month"],
+        post["value"],
+        marker="o",
+        markersize=3.2,
+        linewidth=2.2,
+        color="#d62728",
+        label="Post-2023-05 ESSP (LVM ESSP/ESSP, Luzon+Visayas+Mindanao)",
+    )
+    ax.axvline(break_month, color="#4d4d4d", linestyle="--", linewidth=1.2)
+    ax.text(break_month, ax.get_ylim()[1], "  2023-05 break", va="top", ha="left", fontsize=9, color="#4d4d4d")
+
+    ax.set_title("ESSP Regime Break: Pre vs Post 2023-05", fontsize=14, weight="bold")
+    ax.set_ylabel("PhP/kWh")
+    ax.set_xlabel("Billing Month")
+    ax.xaxis.set_major_locator(mdates.YearLocator())
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+    ax.legend(loc="upper left", fontsize=9)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=220, bbox_inches="tight")
+    plt.close(fig)
+
+
 def main() -> None:
     setup_style()
     base_dir = Path(__file__).resolve().parents[1]
@@ -256,12 +336,14 @@ def main() -> None:
     make_metric_small_multiples(monthly, output_png / "qc_metric_small_multiples.png")
     make_balance_plot(monthly, output_png / "qc_energy_balance_by_scope.png")
     make_six_line_quantities_plot(monthly, output_png / "qc_6line_quantities_lv_vs_lvm.png")
+    make_essp_pre_post_plot(monthly, output_png / "qc_essp_pre_post_2023_05.png")
     make_overlap_heatmap(overlap, output_png / "qc_overlap_heatmap.png")
     make_overlap_top_discrepancies(overlap, output_png / "qc_top_overlap_discrepancies.png")
 
     print(f"Wrote: {output_png / 'qc_metric_small_multiples.png'}")
     print(f"Wrote: {output_png / 'qc_energy_balance_by_scope.png'}")
     print(f"Wrote: {output_png / 'qc_6line_quantities_lv_vs_lvm.png'}")
+    print(f"Wrote: {output_png / 'qc_essp_pre_post_2023_05.png'}")
     print(f"Wrote: {output_png / 'qc_overlap_heatmap.png'}")
     print(f"Wrote: {output_png / 'qc_top_overlap_discrepancies.png'}")
 
